@@ -243,6 +243,6 @@ img {
 
   @media (max-width: 652px) {
       img {
-        top: 50px;
+        top: 20px;
       }
   }
