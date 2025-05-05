@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título que aparece no link -->
+    <meta property="og:title" content="Nota10 - Sistema"/>
+    <!-- Descrição embaixo do título -->
+    <meta property="og:description" content="Gerencie notas escolares de forma simples, rápida e segura com o Nota10."/>
+    <!-- Link que será aberto ao clicar -->
+    <meta property="og:url" content=""/>
+    <!-- Imagem de capa (ex: logo ou banner) -->
+    <meta property="og:image" content=""/>
+    <!-- Tipo de conteúdo (website, article, video, etc) -->
+    <meta property="og:type" content="website"/>
+    <!-- Nome do site (opcional) -->
+    <meta property="og:site_name" content="Nota10"/>
+    <title>Nota10</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="header-sidebar">
+            <div class="img-user">
+                <span id="iniciais">U</span>
+            </div>
+            <div class="txt">
+                <h3 id="nameUser">Usuário</h3>
+                <p id="emailUser">usuario@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="center-sidebar">
+            <li>
+                <a href="./home">
+                    <i class="ri-book-shelf-line"></i>
+                    <p>Minhas matérias</p>
+                </a>
+            </li>
+            <li>
+                <a href="./addMark" class="active">
+                    <i class="ri-add-line"></i>
+                    <p>Adicionar nota</p>
+                </a>
+            </li>
+        </div>
+
+        <div class="footer-sidebar">
+            <li>
+                <a href="#" id="logout" onclick="logout()">
+                    <i class="ri-logout-box-line"></i>
+                    <p>Desconectar</p>
+                </a>
+            </li>
+        </div>
+      </div>
+
+      <main>
+        <h1>Adicionar Notas</h1>
+        <div class="tabela-notas" id="tabelaNotas">
+          <table>
+            <thead>
+              <tr>
+                <th>Matéria</th>
+                <th>P1</th>
+                <th>P2</th>
+                <th>P3</th>
+                <th>NL</th>
+                <th>PG</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyNotas">
+              <!-- Linhas geradas via JS -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+      
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import {
+          getFirestore,
+          doc,
+          setDoc,
+          getDoc,
+          collection,
+          onSnapshot
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyBZJvpAZ-DpoGiU_PqYVS_pK-FDLLBYweo",
+          authDomain: "nota10-ae1eb.firebaseapp.com",
+          projectId: "nota10-ae1eb",
+          storageBucket: "nota10-ae1eb.firebasestorage.app",
+          messagingSenderId: "601186094117",
+          appId: "1:601186094117:web:ca677f955d1a34e62a03cc"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Lista ordenada
+        const materias = [
+          "Biologia", "Filosofia", "Física", "Geografia", "Gramática",
+          "Inglês", "Iniciação Científica", "Literatura", "Matemática A",
+          "Matemática B", "Química", "Redação"
+        ].sort();
+        
+        onAuthStateChanged(auth, async (user) => {
+          if (!user) return window.location.href = "./login";
+        
+          const userRef = doc(db, "usuarios", user.uid);
+          const userSnap = await getDoc(userRef);
+        
+          // 👇 Bloco adicionado conforme solicitado
+          if (userSnap.exists()) {
+            const data = userSnap.data();
+            const nome = data.nome || "Usuário";
+            const email = data.email || user.email;
+        
+            document.getElementById("nameUser").textContent = nome;
+            document.getElementById("emailUser").textContent = email;
+            document.getElementById("iniciais").textContent = nome.charAt(0).toUpperCase();
+          }
+        
+          const tabela = document.getElementById("tbodyNotas");
+        
+          function atualizarInput(materia, tipo, valor) {
+            const input = document.querySelector(`input[data-materia="${materia}"][data-tipo="${tipo}"]`);
+            if (input) input.value = Number(valor).toFixed(2);
+          }
+        
+          async function atualizarPGglobal(novoValor) {
+            for (const mat of materias) {
+              const notaRef = doc(db, "usuarios", user.uid, "materias", mat, "notas", "PG");
+              await setDoc(notaRef, { valor: Number(novoValor) }, { merge: true });
+            }
+          }
+        
+          const estruturaNotas = {
+            "Redação": ["P1", "P2", "P3", "NL", "PG"],
+            "Filosofia": ["P1", "NL", "PG"],
+            "Inglês": ["P1", "NL", "PG"]
+          };
+        
+          function criarLinha(materia) {
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-materia", materia);
+        
+            const notas = estruturaNotas[materia] || ["P1", "P2", "NL", "PG"];
+            let html = `<td>${materia}</td>`;
+            for (const tipo of ["P1", "P2", "P3", "NL", "PG"]) {
+              if (notas.includes(tipo)) {
+                const max = tipo.startsWith("P") && tipo !== "PG" ? 10 : 5;
+                html += `<td><input data-tipo="${tipo}" data-materia="${materia}" maxlength="4" inputmode="decimal" value="0.00" data-max="${max}" class="${tipo === "PG" ? "pg-global" : ""}" /></td>`;
+              } else {
+                html += `<td></td>`;
+              }
+            }
+            tr.innerHTML = html;
+            tabela.appendChild(tr);
+        
+            tr.querySelectorAll("input").forEach(input => {
+              const tipo = input.dataset.tipo;
+              const mat = input.dataset.materia;
+              const max = Number(input.dataset.max);
+        
+              input.addEventListener("input", (e) => {
+                let valor = input.value.replace(",", "."); // aceita ',' como '.'
+                valor = valor.replace(/[^0-9.]/g, ""); // permite números e ponto
+
+                // evita múltiplos pontos
+                const parts = valor.split(".");
+                if (parts.length > 2) {
+                    valor = parts[0] + "." + parts[1];
+                }
+
+                // limita a 2 casas decimais
+                if (parts[1]?.length > 2) {
+                    valor = parts[0] + "." + parts[1].slice(0, 2);
+                }
+
+                // aplica o valor formatado
+                input.value = valor;
+
+                // impede ultrapassar o máximo ao digitar
+                const num = parseFloat(valor);
+                if (!isNaN(num) && num > max) {
+                    input.value = max.toFixed(2);
+                }
+                });
+
+
+                input.addEventListener("blur", async () => {
+                let valor = parseFloat(input.value);
+                if (isNaN(valor)) valor = 0;
+                if (valor > max) valor = max;
+
+                input.value = valor.toFixed(2);
+
+                if (tipo === "PG") {
+                    await atualizarPGglobal(valor);
+                } else {
+                    const notaRef = doc(db, "usuarios", user.uid, "materias", mat, "notas", tipo);
+                    await setDoc(notaRef, { valor }, { merge: true });
+                }
+                });
+
+            });
+          }
+        
+          for (const mat of materias) {
+            criarLinha(mat);
+          }
+        
+          for (const mat of materias) {
+            const notasRef = collection(db, "usuarios", user.uid, "materias", mat, "notas");
+        
+            onSnapshot(notasRef, (snapshot) => {
+              snapshot.forEach(docSnap => {
+                const tipo = docSnap.id;
+                const valor = docSnap.data().valor ?? 0;
+                atualizarInput(mat, tipo, valor);
+              });
+            });
+          }
+        });
+        </script>
+        
+        
+      
+          
+</body>
+</html>

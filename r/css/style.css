@@ -1,0 +1,422 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+:root {
+    --primary-blue: #0074c1;         /* azul forte do texto */
+    --secondary-blue: #00a2ff;       /* azul claro dos traços e detalhes */
+    --accent-blue: #005b99;          /* azul escuro para contrastes */
+    --background-color: #f9f9f9;     /* fundo branco claro da logo */
+    --border-color: #f0f0f0;         /* borda */
+    --icon-color: #cfcfcf;           /* cor para icones */
+    --formsground-color: #fff;       /* fundo branco para o forms */
+    --placeholder-color: #858585;    /* cor para as placeholders */
+    --text-color: #00334e;           /* azul profundo para textos */
+    --font-family-title: 'Baloo 2', cursive; /* estilo amigável e marcante */
+    --font-family-body: 'Inter', sans-serif; /* texto auxiliar */
+}
+  
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Rubik', sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    position: relative;
+    height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    top: 50%;
+    left: 0px;
+    transform: translate(0, -50%);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: #040a16;
+    width: 280px;
+    border-radius: 0 0 10px #0000020e;
+    list-style: none;
+    color: var(--background-color);
+    height: 500px;
+    border-radius: 0 25px 25px 0;
+}
+
+.sidebar .header-sidebar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #091429;
+    .img-user {
+        width: 50px;
+        height: 50px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        border-radius: 50%;
+        background-color: var(--primary-blue);
+        box-shadow: 0 0 10px #0000020e;
+        border: 2px solid var(--accent-blue);
+        font-size: 1.2rem;
+        font-family: var(--font-family-title);
+    }
+
+    .txt {
+        h3 {
+            font-size: 1.05rem;
+            font-family: var(--font-family-title);
+        }
+
+        p {
+            font-size: .8rem;
+        }
+    }
+}
+
+
+.sidebar .center-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: start;
+    width: 100%;
+}
+
+.sidebar li {
+    width: 100%;
+}
+
+.sidebar li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: .5rem;
+    color: #f9f9f9;
+    padding: 10px;
+    transition: .5s ease-in-out;
+    width: 100%;
+    border-radius: 8px;
+    i {
+        font-size: 1.3rem;
+    }
+}
+
+.sidebar li a:hover,
+.sidebar li a.active{
+    background-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px #0074c14d;
+}
+
+.sidebar li a#logout {
+    color: #ff2727;
+}
+
+.sidebar li a#logout:hover {
+    background-color: #ff2727;
+    color: #f9f9f9;
+    box-shadow: 0 0 0 3px #ff272769;
+}
+
+.footer-sidebar {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 2px solid #091429;
+  }
+
+main {
+    width: calc(100% - 300px);
+    margin-left: auto;
+    padding: 20px;
+}
+
+main h1 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+    font-family: var(--font-family-title);
+    color: var(--accent-blue);
+}
+
+.materia {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--formsground-color);
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  
+  .img-mt {
+    width: 58px;
+    height: 58px;
+    background-color: var(--color);
+    border-radius: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  .materia .txt h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+  }
+  
+  .materia .txt p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--placeholder-color);
+  }
+
+  .modal-notas {
+    position: fixed;
+    top: 0;
+    right: -120%;
+    width: 400px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+    z-index: 10000;
+    transition: right 0.4s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-notas #modalMedia {
+    position: absolute;
+    right: 70px;
+    background-color: var(--color, #ccc);
+    width: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    color: #000;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+  
+  .modal-notas.open {
+    right: 0;
+  }
+  
+  .modal-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .modal-header .img-mt {
+    width: 48px;
+    height: 48px;
+    background: var(--color, #ccc);
+    border-radius: 25%;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-info h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .modal-info p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .modal-info span {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--text-color);
+  }
+  
+  .modal-body {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  
+  .nota-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed #ddd;
+    padding: 8px 0;
+    font-size: 15px;
+  }
+  
+  #fecharModal {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+  }
+  .tabela-notas {
+    width: 100%;
+    margin-top: 30px;
+    overflow-x: auto;
+    background-color: var(--formsground-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 91, 153, 0.08);
+    border: 1px solid var(--border-color);
+  }
+  
+  .tabela-notas table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+    font-family: var(--font-family-body);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  
+  .tabela-notas thead {
+    background-color: var(--accent-blue);
+    color: #fff;
+  }
+  
+  .tabela-notas th,
+  .tabela-notas td {
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .tabela-notas tbody tr:nth-child(odd) {
+    background-color: #f5f9fc;
+  }
+  
+  .tabela-notas tbody tr:hover {
+    background-color: #e8f2fb;
+  }
+  
+  .tabela-notas input {
+    width: 70px;
+    padding: 6px 8px;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 6px;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+  }
+  
+  .tabela-notas input:focus {
+    outline: none;
+    border-color: var(--secondary-blue);
+    box-shadow: 0 0 0 2px rgba(0, 162, 255, 0.2);
+  }
+  
+
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 300px;
+    height: 20px;
+    border-radius: 20px;
+    background:
+     repeating-linear-gradient(135deg, var(--primary-blue) 0 10px,var(--secondary-blue) 0 20px) 0/0%   no-repeat,
+     repeating-linear-gradient(135deg,#ddd    0 10px,#eee    0 20px) 0/100%;
+    animation: l3 5s forwards;
+  }
+
+  @keyframes l3 {
+      100% {background-size:100%}
+  }
+
+
+  .modal {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    pointer-events: none;
+    transition: .5s ease-in-out;
+    background-color: #00000010;
+    backdrop-filter: blur(5px);
+  }
+
+  .modal.close {
+    opacity: 0;
+  }
+
+  @media (max-width: 652px) {
+        .sidebar {
+            top: 96%;
+            width: 100%;
+            height: max-content;
+            border-radius: 0;
+            flex-direction: row;
+            align-items: center;
+            gap: 0;
+
+            .header-sidebar {
+                display: none;
+            }
+
+            .center-sidebar {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+            }
+
+            li a {
+                width: max-content;
+                flex-direction: column;
+
+                p {
+                    font-size: .7rem;
+                }
+
+                i {
+                    font-size: 1rem;
+                }
+            }
+
+            .footer-sidebar {
+                border-top: none;
+                padding-top: 0;
+            }
+        }
+
+        main {
+            width: 100%;
+            margin-left: none;
+            
+        }
+
+        .modal-notas {
+            width: 100%;
+            z-index: 9999;
+        }
+  }

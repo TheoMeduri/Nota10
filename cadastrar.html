@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título que aparece no link -->
+    <meta property="og:title" content="Nota10 - Sistema"/>
+    <!-- Descrição embaixo do título -->
+    <meta property="og:description" content="Gerencie notas escolares de forma simples, rápida e segura com o Nota10."/>
+    <!-- Link que será aberto ao clicar -->
+    <meta property="og:url" content=""/>
+    <!-- Imagem de capa (ex: logo ou banner) -->
+    <meta property="og:image" content=""/>
+    <!-- Tipo de conteúdo (website, article, video, etc) -->
+    <meta property="og:type" content="website"/>
+    <!-- Nome do site (opcional) -->
+    <meta property="og:site_name" content="Nota10"/>
+    <title>Nota10</title>
+    <link rel="stylesheet" href="foms.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <img src="logopng.png" style="top: 60px;">
+    <div class="forms" id="cadastro">
+        <h2>Cadastro</h2>
+
+        <div class="input-group">
+            <label for="name">Nome</label>
+            <input type="text" id="name" placeholder="Insira seu nome e primeiro sobrenome" required>
+            <i class="ri-user-2-line"></i>
+        </div>
+
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="text" id="email" placeholder="Insira seu email" required>
+            <i class="ri-mail-line"></i>
+        </div>
+
+        <div class="input-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" placeholder="Insira sua senha" required>
+            <i class="ri-key-2-line"></i>
+        </div>
+
+        <div class="forgot">
+            <a href="./">Já tem conta?</a>
+        </div>
+
+        <div class="input-group" style="margin-top: 40px; margin-bottom: 0;">
+            <button id="cadastroBtn">Cadastrar</button>
+        </div>
+    </div>
+
+    <div class="modal">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  
+    // Sua configuração Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZJvpAZ-DpoGiU_PqYVS_pK-FDLLBYweo",
+      authDomain: "nota10-ae1eb.firebaseapp.com",
+      projectId: "nota10-ae1eb",
+      storageBucket: "nota10-ae1eb.firebasestorage.app",
+      messagingSenderId: "601186094117",
+      appId: "1:601186094117:web:ca677f955d1a34e62a03cc"
+    };
+  
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    function showModal() {
+        const modal = document.querySelector('.modal');
+
+        modal.classList.add('open');
+    }
+
+    function hideModal() {
+        const modal = document.querySelector('.modal');
+
+        modal.classList.remove('open');
+    }
+    // Botão de cadastro
+    document.getElementById("cadastroBtn").addEventListener("click", async (e) => {
+      e.preventDefault();
+  
+      const nome = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const senha = document.getElementById("password").value;
+        
+      if (!nome || !email || !senha) {
+        alert("Preencha todos os campos.");
+        return;
+      }
+  showModal()
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+        const user = userCredential.user;
+  
+        // Salvar nome no Firestore
+        await setDoc(doc(db, "usuarios", user.uid), {
+          nome: nome,
+          email: email,
+          criadoEm: new Date()
+        });
+        hideModal()
+        window.location.href = "./"; // Redireciona para login
+      } catch (error) {
+        hideModal()
+        alert("Erro no cadastro: " + error.message);
+      } finally {
+      }
+    });
+  </script>
+  
+
+</body>
+</html>

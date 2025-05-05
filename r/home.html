@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título que aparece no link -->
+    <meta property="og:title" content="Nota10 - Sistema"/>
+    <!-- Descrição embaixo do título -->
+    <meta property="og:description" content="Gerencie notas escolares de forma simples, rápida e segura com o Nota10."/>
+    <!-- Link que será aberto ao clicar -->
+    <meta property="og:url" content=""/>
+    <!-- Imagem de capa (ex: logo ou banner) -->
+    <meta property="og:image" content=""/>
+    <!-- Tipo de conteúdo (website, article, video, etc) -->
+    <meta property="og:type" content="website"/>
+    <!-- Nome do site (opcional) -->
+    <meta property="og:site_name" content="Nota10"/>
+    <title>Nota10</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+
+      <div class="sidebar">
+        <div class="header-sidebar">
+            <div class="img-user">
+                <span id="iniciais">U</span>
+            </div>
+            <div class="txt">
+                <h3 id="nameUser">Usuário</h3>
+                <p id="emailUser">usuario@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="center-sidebar">
+            <li>
+                <a href="./home" class="active">
+                    <i class="ri-book-shelf-line"></i>
+                    <p>Minhas matérias</p>
+                </a>
+            </li>
+            <li>
+                <a href="./addMark">
+                    <i class="ri-add-line"></i>
+                    <p>Adicionar nota</p>
+                </a>
+            </li>
+        </div>
+
+        <div class="footer-sidebar">
+            <li>
+                <a href="#" id="logout" onclick="logout()">
+                    <i class="ri-logout-box-line"></i>
+                    <p>Desconectar</p>
+                </a>
+            </li>
+        </div>
+      </div>
+
+      <main>
+        <h1>Suas matérias</h1>
+
+        <div class="materias">
+            <div class="materia">
+                <div class="img-mt" style="--color: #4CAF50;"><span>B</span></div>
+                <div class="txt"><h3>Biologia</h3><p>Prof. Paty</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #6A1B9A;"><span>F</span></div>
+                <div class="txt"><h3>Filosofia</h3><p>Prof. Diego</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #1565C0;"><span>F</span></div>
+                <div class="txt"><h3>Física</h3><p>Prof. Bergaro</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #8BC34A;"><span>G</span></div>
+                <div class="txt"><h3>Geografia</h3><p>Prof. Luiz</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #607D8B;"><span>G</span></div>
+                <div class="txt"><h3>Gramática</h3><p>Prof. Leandro</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #0097A7;"><span>IC</span></div>
+                <div class="txt"><h3>Iniciação Científica</h3><p>Prof. Bergaro</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #1976D2;"><span>I</span></div>
+                <div class="txt"><h3>Inglês</h3><p>Prof. Agnes</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #AD1457;"><span>L</span></div>
+                <div class="txt"><h3>Literatura</h3><p>Prof. Chid</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #3F51B5;"><span>M</span></div>
+                <div class="txt"><h3>Matemática A</h3><p>Prof. Caio</p></div>
+              </div>
+
+              <div class="materia">
+                <div class="img-mt" style="--color: #3F51B5;"><span>M</span></div>
+                <div class="txt"><h3>Matemática B</h3><p>Prof. Vera</p></div>
+              </div>
+              
+              <div class="materia">
+                <div class="img-mt" style="--color: #FF7043;"><span>Q</span></div>
+                <div class="txt"><h3>Química</h3><p>Prof. Deia</p></div>
+              </div>
+
+              <div class="materia">
+                <div class="img-mt" style="--color: #D84315;"><span>R</span></div>
+                <div class="txt"><h3>Redação</h3><p>Prof. Sandro</p></div>
+              </div>
+              
+        </div>
+      </main>
+
+      <div class="modal-notas" id="modalNotas">
+        <div class="modal-header">
+          <div class="img-mt" id="modalColor"><span id="modalInicial">M</span></div>
+          <div class="modal-info">
+            <h2 id="modalNome">Matéria</h2>
+            <p id="modalProfessor">Prof. Nome</p>
+            <span id="modalMedia">--.--</span>
+          </div>
+          <button id="fecharModal"><i class="ri-close-line"></i></button>
+        </div>
+      
+        <div class="modal-body" id="listaNotas">
+          <!-- Notas serão inseridas aqui -->
+        </div>
+      </div>
+      <br>
+      <br><br><br><br>
+
+    <div class="modal">
+        <p>Carregando suas matérias</p>
+        <div class="loader"></div>
+    </div>
+
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menu principal
+            document.querySelectorAll('.has-submenu > a').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                link.parentElement.classList.toggle('open');
+            });
+            });
+
+            // Submenu interno (frentes)
+            document.querySelectorAll('.has-subsubmenu > a').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                link.parentElement.classList.toggle('open');
+            });
+            });
+        });
+
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      collection,
+      getDocs,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZJvpAZ-DpoGiU_PqYVS_pK-FDLLBYweo",
+      authDomain: "nota10-ae1eb.firebaseapp.com",
+      projectId: "nota10-ae1eb",
+      storageBucket: "nota10-ae1eb.firebasestorage.app",
+      messagingSenderId: "601186094117",
+      appId: "1:601186094117:web:ca677f955d1a34e62a03cc"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      window.onload = function () {
+        setTimeout(() => {
+          document.querySelector('.modal')?.classList.add('close');
+        }, 5000);
+      };
+    
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) return window.location.href = "./login";
+    
+        const userRef = doc(db, "usuarios", user.uid);
+        const userSnap = await getDoc(userRef);
+    
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          const nome = data.nome || "Usuário";
+          const email = data.email || user.email;
+    
+          document.getElementById("nameUser").textContent = nome;
+          document.getElementById("emailUser").textContent = email;
+          document.getElementById("iniciais").textContent = nome.charAt(0).toUpperCase();
+        }
+    
+        // Verifica e cria matérias com subcoleção de notas
+        const materias = [
+          { nome: "Biologia", cor: "#4CAF50" },
+          { nome: "Filosofia", cor: "#6A1B9A" },
+          { nome: "Física", cor: "#1565C0" },
+          { nome: "Geografia", cor: "#8BC34A" },
+          { nome: "Gramática", cor: "#607D8B" },
+          { nome: "Iniciação Científica", cor: "#0097A7" },
+          { nome: "Inglês", cor: "#1976D2" },
+          { nome: "Literatura", cor: "#AD1457" },
+          { nome: "Matemática A", cor: "#3F51B5" },
+          { nome: "Matemática B", cor: "#3F51B5" },
+          { nome: "Química", cor: "#FF7043" },
+          { nome: "Redação", cor: "#D84315" }
+        ];
+    
+        const materiasRef = collection(db, "usuarios", user.uid, "materias");
+        const snapshot = await getDocs(materiasRef);
+        const existentes = snapshot.docs.map(doc => doc.id);
+    
+        for (let materia of materias) {
+          if (!existentes.includes(materia.nome)) {
+            const materiaDocRef = doc(materiasRef, materia.nome);
+    
+            await setDoc(materiaDocRef, {
+              nome: materia.nome,
+              cor: materia.cor,
+              criadoEm: new Date()
+            });
+    
+            const notasRef = collection(materiaDocRef, "notas");
+            let notas = [];
+    
+            if (materia.nome === "Redação") {
+              notas = ["P1", "P2", "P3", "MEDIA"];
+            } else if (["Filosofia", "Inglês"].includes(materia.nome)) {
+              notas = ["P1", "NL", "PG", "MEDIA"];
+            } else {
+              notas = ["P1", "P2", "NL", "PG", "MEDIA"];
+            }
+    
+            for (const nota of notas) {
+              await setDoc(doc(notasRef, nota), { valor: null });
+            }
+          }
+        }
+    
+        // Clique nas matérias
+        document.querySelectorAll('.materia').forEach(materia => {
+  materia.addEventListener('click', async () => {
+    const nome = materia.querySelector('h3').textContent;
+    const professor = materia.querySelector('p').textContent;
+    const inicial = materia.querySelector('.img-mt span').textContent;
+    const cor = materia.querySelector('.img-mt').style.getPropertyValue('--color');
+
+    document.getElementById('modalNome').textContent = nome;
+    document.getElementById('modalProfessor').textContent = professor;
+    document.getElementById('modalInicial').textContent = inicial;
+    document.getElementById('modalColor').style.setProperty('--color', cor);
+
+    const lista = document.getElementById('listaNotas');
+    lista.innerHTML = '';
+
+    const notasRef = collection(db, "usuarios", user.uid, "materias", nome, "notas");
+    const notasSnap = await getDocs(notasRef);
+
+    const notas = {};
+    notasSnap.forEach(doc => {
+      notas[doc.id] = doc.data().valor;
+    });
+
+    // função auxiliar
+    const parse = (v) => v != null ? Number(v) : null;
+
+    let mediaFinal = null;
+
+    if (nome === "Redação") {
+      const p1 = parse(notas.P1);
+      const p2 = parse(notas.P2);
+      const p3 = parse(notas.P3);
+      if (p1 != null && p2 != null && p3 != null) {
+        mediaFinal = ((p2 + p3) / 2 + p1) / 2;
+      }
+    } else if (["Filosofia", "Inglês"].includes(nome)) {
+      const p1 = parse(notas.P1);
+      const nl = parse(notas.NL);
+      const pg = parse(notas.PG);
+      if (p1 != null && nl != null && pg != null) {
+        mediaFinal = (p1 + nl + pg) / 2;
+      }
+    } else if (nome === "Matemática A") {
+      const p1 = parse(notas.P1);
+      const p2 = parse(notas.P2);
+      const nl = parse(notas.NL);
+      const pg = parse(notas.PG);
+
+      const aNotas = [p1, p2, nl, pg];
+
+      const validA = aNotas.every(v => v != null);
+
+      if (validA) {
+        const mediaA = (p1 + p2 + nl + pg) / 3;
+        mediaFinal = mediaA * 0.55;
+      }
+    } else if (nome === "Matemática B") {
+      const p1 = parse(notas.P1);
+      const p2 = parse(notas.P2);
+      const nl = parse(notas.NL);
+      const pg = parse(notas.PG);
+
+      const bNotas = [p1, p2, nl, pg];
+
+      const validB = bNotas.every(v => v != null);
+
+      if (validB) {
+        const mediaB = (p1 + p2 + nl + pg) / 3;
+        mediaFinal = mediaB * 0.45;
+      }
+    } else {
+      const p1 = parse(notas.P1);
+      const p2 = parse(notas.P2);
+      const nl = parse(notas.NL);
+      const pg = parse(notas.PG);
+      if (p1 != null && p2 != null && nl != null && pg != null) {
+        mediaFinal = (p1 + p2 + nl + pg) / 3;
+      }
+    }
+
+    // Atualiza Firestore se média calculada
+    if (mediaFinal != null) {
+      await setDoc(doc(notasRef, "MEDIA"), { valor: Number(mediaFinal.toFixed(2)) });
+    }
+
+    // Renderiza no modal
+    const todasNotas = Object.entries(notas).sort(([a], [b]) => a.localeCompare(b));
+    for (const [nota, valor] of todasNotas) {
+      if (nota !== "MEDIA") {
+        lista.innerHTML += `
+          <div class="nota-item">
+            <span>${nota}</span>
+            <span>${valor != null ? valor.toFixed(2) : "0.00"}</span>
+          </div>`;
+      }
+    }
+
+    document.getElementById('modalMedia').textContent = `${mediaFinal != null ? mediaFinal.toFixed(2) : "0.00"}`;
+    document.getElementById('modalNotas').classList.add('open');
+  });
+});
+
+    
+        // Fecha modal
+        document.getElementById('fecharModal').addEventListener('click', () => {
+          document.getElementById('modalNotas').classList.remove('open');
+        });
+      });
+    });
+    </script>
+    
+  
+  
+</body>
+</html>

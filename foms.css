@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+:root {
+    --primary-blue: #0074c1;         /* azul forte do texto */
+    --secondary-blue: #00a2ff;       /* azul claro dos traços e detalhes */
+    --accent-blue: #005b99;          /* azul escuro para contrastes */
+    --background-color: #f9f9f9;     /* fundo branco claro da logo */
+    --border-color: #f0f0f0;         /* borda */
+    --icon-color: #cfcfcf;           /* cor para icones */
+    --formsground-color: #fff;       /* fundo branco para o forms */
+    --placeholder-color: #858585;    /* cor para as placeholders */
+    --text-color: #00334e;           /* azul profundo para textos */
+    --font-family-title: 'Baloo 2', cursive; /* estilo amigável e marcante */
+    --font-family-body: 'Inter', sans-serif; /* texto auxiliar */
+}
+  
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Rubik', sans-serif;
+}
+
+body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--background-color);
+}
+
+.forms {
+    padding: 20px;
+    background-color: var(--formsground-color);
+    width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px #00000010;
+    border: 2px solid var(--border-color);
+}
+
+img {
+    width: 200px;
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.forms h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: var(--font-family-title);
+    color: var(--accent-blue);
+    font-size: 2rem;
+}
+
+.forms .input-group {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.forms .input-group label {
+    color: var(--accent-blue);
+    font-family: var(--font-family-body);
+    font-weight: 500;
+}
+
+.forms .input-group input {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid var(--border-color);
+    padding: 10px;
+    transition: .3s ease-in-out;
+    outline: none;
+    font-size: 1rem;
+    padding-right: 35px;
+}
+
+.forms .input-group input::placeholder {
+    color: var(--placeholder-color);
+}
+
+.forms .input-group i {
+    position: absolute;
+    top: 55%;
+    right: 10px;
+    font-size: 1.05rem;
+    color: var(--icon-color);
+    transition: .3s ease-in-out;
+}
+
+.forms .input-group input:focus,
+.forms .input-group input:valid {
+    border-color: var(--primary-blue);
+}
+
+.forms .input-group input:focus ~ i, 
+.forms .input-group input:valid ~ i{
+    color: var(--accent-blue);
+}
+
+.forms .input-group button {
+    padding: 13px;
+    width: 100%;
+    border: 2px solid var(--primary-blue);
+    background-color: var(--secondary-blue);
+    border-radius: 10px;
+    font-size: 1.05rem;
+    color: var(--background-color);
+    text-transform: uppercase;
+    transition: .5s ease-in-out;
+}
+
+.forms .input-group button:hover {
+    background-color: var(--primary-blue);
+    box-shadow: 0 0 0 5px #0074c14d;
+    cursor: pointer;
+    letter-spacing: 3px;
+}
+
+.forgot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    a {
+        text-decoration: none;
+        color: var(--primary-blue);
+    }
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-family-body);
+    font-size: 14px;
+    color: var(--text-color);
+    user-select: none;
+    cursor: pointer;
+}
+
+/* Esconde o checkbox nativo */
+.remember input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--primary-blue);
+    border-radius: 4px;
+    background-color: #fff;
+    position: relative;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Ícone de check (customizado) */
+.remember input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background-color: var(--primary-blue);
+    opacity: 0;
+    transition: .5s ease-in-out;
+}
+
+.remember input[type="checkbox"]:checked {
+    box-shadow: 0 0 0 3px #0074c14d;
+}
+
+/* Estado marcado */
+.remember input[type="checkbox"]:checked::before {
+    opacity: 1;
+}
+
+/* Label animado ao marcar */
+.remember label {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.remember input[type="checkbox"]:checked + label {
+    color: var(--primary-blue);
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid var(--primary-blue);
+    animation:
+      l20-1 0.8s infinite linear alternate,
+      l20-2 1.6s infinite linear;
+  }
+  @keyframes l20-1{
+     0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
+     12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
+     25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
+     50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+     62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
+     75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
+     100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+  }
+  @keyframes l20-2{ 
+    0%    {transform:scaleY(1)  rotate(0deg)}
+    49.99%{transform:scaleY(1)  rotate(135deg)}
+    50%   {transform:scaleY(-1) rotate(0deg)}
+    100%  {transform:scaleY(-1) rotate(-135deg)}
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: .5s ease-in-out;
+  }
+
+  .modal.open {
+    opacity: 1;
+    background-color: #00000010;
+    backdrop-filter: blur(5px);
+  }
