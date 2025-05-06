@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nota10 - Administração</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+    --primary-blue: #0074c1;         /* azul forte do texto */
+    --secondary-blue: #00a2ff;       /* azul claro dos traços e detalhes */
+    --accent-blue: #005b99;          /* azul escuro para contrastes */
+    --background-color: #f9f9f9;     /* fundo branco claro da logo */
+    --border-color: #f0f0f0;         /* borda */
+    --icon-color: #cfcfcf;           /* cor para icones */
+    --formsground-color: #fff;       /* fundo branco para o forms */
+    --placeholder-color: #858585;    /* cor para as placeholders */
+    --text-color: #00334e;           /* azul profundo para textos */
+    --font-family-title: 'Baloo 2', cursive; /* estilo amigável e marcante */
+    --font-family-body: 'Inter', sans-serif; /* texto auxiliar */
+}
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef1f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2f3640;
+      margin-bottom: 30px;
+    }
+
+    .user-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 700px;
+      transition: transform 0.2s;
+    }
+
+    .user-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .user-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .user-header .icon {
+      background-color: #dcdde1;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #2f3640;
+    }
+
+    .user-info h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #192a56;
+    }
+
+    .user-info p {
+      margin: 2px 0;
+      color: #636e72;
+      font-size: 14px;
+    }
+
+    .materia-list {
+      margin-top: 15px;
+    }
+
+    .materia {
+      background-color: #f5f6fa;
+      padding: 10px 15px;
+      border-left: 4px solid #e84118;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .materia strong {
+      color: #2f3640;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    
+    .password-box {
+      background: #fff;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.25);
+    }
+
+    .password-box input {
+      padding: 10px;
+      width: 200px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .password-box button {
+      margin-top: 15px;
+      padding: 8px 20px;
+      background: #44bd32;
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .password-box button:hover {
+      background: #4cd137;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    /* HTML: <div class="loader"></div> */
+.loader {
+    width: 300px;
+    height: 20px;
+    border-radius: 20px;
+    background:
+     repeating-linear-gradient(135deg, var(--primary-blue) 0 10px,var(--secondary-blue) 0 20px) 0/0%   no-repeat,
+     repeating-linear-gradient(135deg,#ddd    0 10px,#eee    0 20px) 0/100%;
+  }
+
+  @keyframes l3 {
+      100% {background-size:100%}
+  }
+
+
+  .modal {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    pointer-events: none;
+    transition: .5s ease-in-out;
+    background-color: #00000021;
+    backdrop-filter: blur(10px);
+  }
+
+  .modal.close {
+    opacity: 0;
+  }
+
+  </style>
+</head>
+<body>
+  <div class="overlay" id="senhaTela">
+    <div class="password-box">
+      <h2>Área Restrita</h2>
+      <input type="password" id="senhaInput" placeholder="Digite a senha" />
+      <br />
+      <button onclick="verificarSenha()">Acessar</button>
+      <div class="error" id="erroSenha"></div>
+    </div>
+  </div>
+
+  <div class="modal close">
+    <p>Carregando recuperações</p>
+    <div class="loader"></div>
+</div>
+
+  <h1>Alunos em Recuperação</h1>
+  <div id="listaRecuperacao"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZJvpAZ-DpoGiU_PqYVS_pK-FDLLBYweo",
+      authDomain: "nota10-ae1eb.firebaseapp.com",
+      projectId: "nota10-ae1eb",
+      storageBucket: "nota10-ae1eb.firebasefirestorage.app",
+      messagingSenderId: "601186094117",
+      appId: "1:601186094117:web:ca677f955d1a34e62a03cc"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById("listaRecuperacao");
+
+    async function carregarDados() {
+      const usuariosRef = collection(db, "usuarios");
+      const usuariosSnap = await getDocs(usuariosRef);
+
+      for (const userDoc of usuariosSnap.docs) {
+        const userId = userDoc.id;
+        const userData = userDoc.data();
+        const email = userData.email || "";
+        const nome = userData.nome || "Sem nome";
+
+        if (email === "theomeduri@gmail.com") continue;
+
+        const materiasRef = collection(db, "usuarios", userId, "materias");
+        const materiasSnap = await getDocs(materiasRef);
+
+        let materiasReprovadas = [];
+
+        let matA = null, matB = null;
+
+        for (const mat of materiasSnap.docs) {
+          const nomeMat = mat.id;
+          const mediaDoc = await getDoc(doc(db, "usuarios", userId, "materias", nomeMat, "notas", "MEDIA"));
+          if (!mediaDoc.exists()) continue;
+
+          const media = mediaDoc.data().valor ?? 0;
+          if (media === 0) continue;
+
+          if (nomeMat === "Matemática A") matA = media;
+          else if (nomeMat === "Matemática B") matB = media;
+          else if (media < 6) materiasReprovadas.push({ nome: nomeMat, media });
+        }
+
+        if (matA !== null && matB !== null) {
+          const soma = matA + matB;
+          if (soma < 6) materiasReprovadas.push({ nome: "Matemática AB", media: soma });
+        }
+
+        if (materiasReprovadas.length > 0) {
+          const div = document.createElement("div");
+          div.className = "user-card";
+          div.innerHTML = `
+            <div class="user-header">
+              <div class="icon">${nome.charAt(0).toUpperCase()}</div>
+              <div class="user-info">
+                <h3>${nome}</h3>
+                <p>${email}</p>
+              </div>
+            </div>
+            <div class="materia-list">
+              ${materiasReprovadas.map(m => `
+                <div class="materia">
+                  <strong>${m.nome}</strong>
+                  <span>Média: ${m.media.toFixed(2)}</span>
+                </div>
+              `).join("")}
+            </div>
+          `;
+          container.appendChild(div);
+        }
+      }
+    }
+
+    window.verificarSenha = () => {
+  const senhaCorreta = "18482726";
+  const entrada = document.getElementById("senhaInput").value;
+  const erroDiv = document.getElementById("erroSenha");
+
+  if (entrada === senhaCorreta) {
+    document.getElementById("senhaTela").style.display = "none";
+    document.querySelector('.modal').classList.remove('close');
+    
+    // Aplica animação depois da senha correta
+    const loader = document.querySelector('.loader');
+    loader.style.animation = "l3 7s forwards";
+
+    carregarDados();
+
+    setTimeout(() => {
+      document.querySelector('.modal').classList.add('close');
+    }, 7000);
+
+  } else {
+    erroDiv.textContent = "Senha incorreta. Tente novamente.";
+  }
+};
+
+
+  </script>
+</body>
+</html>
