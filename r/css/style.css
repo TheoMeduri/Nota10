@@ -290,6 +290,7 @@ main h1 {
     grid-template-columns: 100px 100px 100px;
     gap: 10px;
     width: 100%;
+    align-items: center;
     justify-content: center;
     spanp#notSuggest {
         width: 100%;
@@ -450,17 +451,19 @@ main h1 {
             }
 
             li a {
-                width: max-content;
+                position: relative;
+                width: 70px;
                 flex-direction: column;
 
                 p {
-                    font-size: .7rem;
+                    display: none;
                 }
 
                 i {
-                    font-size: 1rem;
+                    font-size: 1.4rem;
                 }
             }
+
 
             .footer-sidebar {
                 border-top: none;

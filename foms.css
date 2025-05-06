@@ -240,9 +240,3 @@ img {
     background-color: #00000010;
     backdrop-filter: blur(5px);
   }
-
-  @media (max-width: 652px) {
-      img {
-        top: 20px;
-      }
-  }

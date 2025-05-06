@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Título que aparece no link -->
+        <meta property="og:title" content="Nota10 - Sistema"/>
+        <!-- Descrição embaixo do título -->
+        <meta property="og:description" content="Gerencie notas escolares de forma simples, rápida e segura com o Nota10."/>
+        <!-- Link que será aberto ao clicar -->
+        <meta property="og:url" content=""/>
+        <!-- Imagem de capa (ex: logo ou banner) -->
+        <meta property="og:image" content=""/>
+        <!-- Tipo de conteúdo (website, article, video, etc) -->
+        <meta property="og:type" content="website"/>
+        <!-- Nome do site (opcional) -->
+        <meta property="og:site_name" content="Nota10"/>
+        <title>Nota10</title>
+        <link rel="stylesheet" href="./css/style.css">
+        <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+    </head>
+</head>
+<body>
+    
+    <div class="sidebar">
+        <div class="header-sidebar">
+            <div class="img-user">
+                <span id="iniciais">U</span>
+            </div>
+            <div class="txt">
+                <h3 id="nameUser">Usuário</h3>
+                <p id="emailUser">usuario@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="center-sidebar">
+            <li>
+                <a href="./home">
+                    <i class="ri-book-shelf-line"></i>
+                    <p>Minhas matérias</p>
+                </a>
+            </li>
+            <li>
+              <a href="./rec" class="active">
+                  <i class="ri-loop-left-fill"></i>
+                  <p>Minhas recuperações</p>
+              </a>
+          </li>
+            <li>
+                <a href="./addMark">
+                    <i class="ri-add-line"></i>
+                    <p>Adicionar nota</p>
+                </a>
+            </li>
+        </div>
+
+        <div class="footer-sidebar">
+            <li>
+                <a href=".//" id="logout" onclick="logout()">
+                    <i class="ri-logout-box-line"></i>
+                    <p>Desconectar</p>
+                </a>
+            </li>
+        </div>
+      </div>
+
+
+      <main>
+        <h1>Suas recuperações</h1>
+
+        <div class="recs">
+
+        </div>
+    </main>
+    <div class="modal-notas" id="modalNotas">
+        <div class="modal-header">
+          <div class="img-mt" id="modalColor"><span id="modalInicial">M</span></div>
+          <div class="modal-info">
+            <h2 id="modalNome">Matéria</h2>
+            <p id="modalProfessor">Prof. Nome</p>
+            <span id="modalMedia">--.--</span>
+          </div>
+          <button id="fecharModal"><i class="ri-close-line"></i></button>
+        </div>
+      
+        <div class="modal-body" id="listaNotas">
+          <!-- Notas serão inseridas aqui -->
+        </div>
+
+        <div class="modal-body">
+            <div class="icon"><i class="ri-bard-line"></i> <p>Sugestões Inteligentes</p></div>
+
+            <div class="notasIA">
+            </div>
+        </div>
+      </div>
+
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import {
+          getFirestore,
+          collection,
+          getDocs,
+          doc,
+          getDoc,
+          setDoc
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyBZJvpAZ-DpoGiU_PqYVS_pK-FDLLBYweo",
+          authDomain: "nota10-ae1eb.firebaseapp.com",
+          projectId: "nota10-ae1eb",
+          storageBucket: "nota10-ae1eb.firebasefirestorage.app",
+          messagingSenderId: "601186094117",
+          appId: "1:601186094117:web:ca677f955d1a34e62a03cc"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const recContainer = document.querySelector(".recs");
+      
+        onAuthStateChanged(auth, async (user) => {
+          if (!user) return window.location.href = "./login";
+      
+          const materiasRef = collection(db, "usuarios", user.uid, "materias");
+          const materiasSnap = await getDocs(materiasRef);
+      
+          let mediaMatA = null, mediaMatB = null, corMatA = "#3F51B5";
+      
+          for (const docSnap of materiasSnap.docs) {
+            const nome = docSnap.id;
+            const cor = docSnap.data().cor || "#999";
+      
+            const notasRef = collection(db, "usuarios", user.uid, "materias", nome, "notas");
+            const notasSnap = await getDocs(notasRef);
+            const notas = {};
+            notasSnap.forEach(nota => {
+              notas[nota.id] = nota.data().valor ?? null;
+            });
+      
+            const media = notas.MEDIA;
+            const parse = v => v != null ? Number(v) : null;
+            const mediaCalculada = parse(media);
+      
+            if (nome === "Matemática A") {
+              mediaMatA = mediaCalculada;
+              corMatA = cor;
+              continue;
+            }
+            if (nome === "Matemática B") {
+              mediaMatB = mediaCalculada;
+              continue;
+            }
+      
+            if (mediaCalculada != null && mediaCalculada < 6) {
+              const falta = (6 - mediaCalculada).toFixed(2);
+      
+              const div = document.createElement("div");
+              div.className = "materia";
+              div.style.setProperty("--color", cor);
+              div.innerHTML = `
+                <div class="img-mt"><span>${nome[0]}</span></div>
+                <div class="txt">
+                  <h3>${nome}</h3>
+                  <p>Média: ${mediaCalculada.toFixed(2)} | Falta: ${falta}</p>
+                </div>
+              `;
+      
+              div.addEventListener("click", async () => {
+                document.getElementById("modalNome").textContent = nome;
+                document.getElementById("modalProfessor").textContent = "Prova REC";
+                document.getElementById("modalInicial").textContent = nome.charAt(0).toUpperCase();
+                document.getElementById("modalColor").style.setProperty("--color", cor);
+                document.getElementById("modalMedia").textContent = mediaCalculada.toFixed(2);
+                document.getElementById("listaNotas").innerHTML = `
+                  <div class="nota-item">
+                    <span>Prova REC</span>
+                    <span>0.00</span>
+                  </div>
+                `;
+      
+                const sugestoesDiv = document.querySelector(".notasIA");
+                sugestoesDiv.innerHTML = "";
+      
+                const recRef = doc(db, "usuarios", user.uid, "materias", nome, "notas", "REC");
+                const recSnap = await getDoc(recRef);
+                const recNota = recSnap.exists() ? recSnap.data().valor ?? null : null;
+      
+                const sugestao = recNota != null
+                  ? recNota + (6 - recNota)
+                  : 6 + (6 - mediaCalculada);
+      
+                sugestoesDiv.innerHTML = `
+                  <div class="notaIA">
+                    <p id="nameTest">REC</p>
+                    <h3 id="markTest">${sugestao.toFixed(2)}</h3>
+                  </div>
+                `;
+      
+                document.getElementById("modalNotas").classList.add("open");
+              });
+      
+              recContainer.appendChild(div);
+            }
+          }
+      
+          if (mediaMatA != null && mediaMatB != null) {
+            const total = mediaMatA + mediaMatB;
+            if (total < 6) {
+              const falta = (6 - total).toFixed(2);
+              const div = document.createElement("div");
+              div.className = "materia";
+              div.style.setProperty("--color", corMatA);
+              div.innerHTML = `
+                <div class="img-mt"><span>M</span></div>
+                <div class="txt">
+                  <h3>Matemática AB</h3>
+                  <p>Média: ${total.toFixed(2)} | Falta: ${falta}</p>
+                </div>
+              `;
+      
+              div.addEventListener("click", async () => {
+                document.getElementById("modalNome").textContent = "Matemática AB";
+                document.getElementById("modalProfessor").textContent = "Prova REC";
+                document.getElementById("modalInicial").textContent = "M";
+                document.getElementById("modalColor").style.setProperty("--color", corMatA);
+                document.getElementById("modalMedia").textContent = total.toFixed(2);
+                document.getElementById("listaNotas").innerHTML = `
+                  <div class="nota-item">
+                    <span>Prova REC</span>
+                    <span>0.00</span>
+                  </div>
+                `;
+      
+                const sugestoesDiv = document.querySelector(".notasIA");
+                sugestoesDiv.innerHTML = `
+                  <div class="notaIA">
+                    <p id="nameTest">REC</p>
+                    <h3 id="markTest">${(6 + (6 - total)).toFixed(2)}</h3>
+                  </div>
+                `;
+      
+                document.getElementById("modalNotas").classList.add("open");
+      
+                await setDoc(doc(db, "usuarios", user.uid, "materias", "Matemática AB"), {
+                  nome: "Matemática AB",
+                  cor: corMatA,
+                  criadoEm: new Date()
+                }, { merge: true });
+      
+                await setDoc(doc(db, "usuarios", user.uid, "materias", "Matemática AB", "notas", "MEDIA"), {
+                  valor: total
+                }, { merge: true });
+              });
+      
+              recContainer.appendChild(div);
+            }
+          }
+      
+          document.getElementById('fecharModal').addEventListener('click', () => {
+            document.getElementById('modalNotas').classList.remove('open');
+          });
+        });
+      </script>
+      
+
+        
+</body>
+</html>

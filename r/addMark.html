@@ -39,6 +39,12 @@
                 </a>
             </li>
             <li>
+              <a href="./rec">
+                  <i class="ri-loop-left-fill"></i>
+                  <p>Minhas recuperações</p>
+              </a>
+          </li>
+            <li>
                 <a href="./addMark" class="active">
                     <i class="ri-add-line"></i>
                     <p>Adicionar nota</p>
@@ -48,7 +54,7 @@
 
         <div class="footer-sidebar">
             <li>
-                <a href="#" id="logout" onclick="logout()">
+                <a href="../" id="logout" onclick="logout()">
                     <i class="ri-logout-box-line"></i>
                     <p>Desconectar</p>
                 </a>
@@ -68,6 +74,7 @@
                 <th>P3</th>
                 <th>NL</th>
                 <th>PG</th>
+                <th>REC</th>
               </tr>
             </thead>
             <tbody id="tbodyNotas">
@@ -143,25 +150,42 @@
           }
         
           const estruturaNotas = {
-            "Redação": ["P1", "P2", "P3", "NL", "PG"],
+            "Redação": ["P1", "P2", "P3"],
             "Filosofia": ["P1", "NL", "PG"],
             "Inglês": ["P1", "NL", "PG"]
           };
         
-          function criarLinha(materia) {
+          async function criarLinha(materia) {
             const tr = document.createElement("tr");
             tr.setAttribute("data-materia", materia);
         
             const notas = estruturaNotas[materia] || ["P1", "P2", "NL", "PG"];
             let html = `<td>${materia}</td>`;
-            for (const tipo of ["P1", "P2", "P3", "NL", "PG"]) {
-              if (notas.includes(tipo)) {
-                const max = tipo.startsWith("P") && tipo !== "PG" ? 10 : 5;
-                html += `<td><input data-tipo="${tipo}" data-materia="${materia}" maxlength="4" inputmode="decimal" value="0.00" data-max="${max}" class="${tipo === "PG" ? "pg-global" : ""}" /></td>`;
+            for (const tipo of ["P1", "P2", "P3", "NL", "PG", "REC"]) {
+              const mediaRef = doc(db, "usuarios", user.uid, "materias", materia, "notas", "MEDIA");
+              let mostrarRec = false;
+
+              if (tipo === "REC") {
+                // Verifica se precisa mostrar REC (média < 6)
+                try {
+                    const snap = await getDoc(mediaRef);
+                  if (snap.exists()) {
+                    const media = snap.data().valor;
+                    mostrarRec = typeof media === "number" && media < 6;
+                  }
+                } catch (e) {
+                  console.error("Erro ao buscar média:", e);
+                }
+              }
+
+              if ((notas.includes(tipo) || tipo === "REC") && (tipo !== "REC" || mostrarRec)) {
+                const max = tipo === "NL" || tipo === "PG" ? 5 : 10;
+                html += `<td><input data-tipo="${tipo}" data-materia="${materia}" maxlength="4" inputmode="decimal" value="${tipo === "REC" ? "0.00" : "0.00"}" data-max="${max}" /></td>`;
               } else {
                 html += `<td></td>`;
               }
             }
+
             tr.innerHTML = html;
             tabela.appendChild(tr);
         
@@ -231,9 +255,6 @@
           }
         });
         </script>
-        
-        
-      
           
 </body>
 </html>

@@ -40,6 +40,12 @@
                 </a>
             </li>
             <li>
+              <a href="./rec">
+                  <i class="ri-loop-left-fill"></i>
+                  <p>Minhas recuperações</p>
+              </a>
+          </li>
+            <li>
                 <a href="./addMark">
                     <i class="ri-add-line"></i>
                     <p>Adicionar nota</p>
@@ -49,7 +55,7 @@
 
         <div class="footer-sidebar">
             <li>
-                <a href="#" id="logout" onclick="logout()">
+                <a href=".//" id="logout" onclick="logout()">
                     <i class="ri-logout-box-line"></i>
                     <p>Desconectar</p>
                 </a>
@@ -214,7 +220,7 @@
       };
     
       onAuthStateChanged(auth, async (user) => {
-        if (!user) return window.location.href = "./login";
+        if (!user) return window.location.href = "../";
     
         const userRef = doc(db, "usuarios", user.uid);
         const userSnap = await getDoc(userRef);
@@ -364,16 +370,18 @@
     }
 
     // Renderiza no modal
-    const todasNotas = Object.entries(notas).sort(([a], [b]) => a.localeCompare(b));
-    for (const [nota, valor] of todasNotas) {
-      if (nota !== "MEDIA") {
-        lista.innerHTML += `
-          <div class="nota-item">
-            <span>${nota}</span>
-            <span>${valor != null ? valor.toFixed(2) : "0.00"}</span>
-          </div>`;
-      }
-    }
+    // SEM excluir "REC"
+const todasNotas = Object.entries(notas).sort(([a], [b]) => a.localeCompare(b));
+for (const [nota, valor] of todasNotas) {
+  if (nota !== "MEDIA") {
+    lista.innerHTML += `
+      <div class="nota-item">
+        <span>${nota === "REC" ? "Prova REC" : nota}</span>
+        <span>${valor != null ? valor.toFixed(2) : "0.00"}</span>
+      </div>`;
+  }
+}
+
     const sugestoesDiv = document.querySelector('.notasIA');
 sugestoesDiv.innerHTML = '';
 
@@ -511,8 +519,6 @@ if (nome === "Redação") {
       });
     });
     </script>
-    
-  
   
 </body>
 </html>
