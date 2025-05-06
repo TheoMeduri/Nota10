@@ -95,7 +95,7 @@
             </div>
         </div>
       </div>
-<br><br><br></br>
+      <br> <br> <br> <br>
 
       <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -171,19 +171,35 @@
               `;
       
               div.addEventListener("click", async () => {
+                const sugestoesDiv = document.querySelector(".notasIA");
                 document.getElementById("modalNome").textContent = nome;
                 document.getElementById("modalProfessor").textContent = "Prova REC";
                 document.getElementById("modalInicial").textContent = nome.charAt(0).toUpperCase();
                 document.getElementById("modalColor").style.setProperty("--color", cor);
                 document.getElementById("modalMedia").textContent = mediaCalculada.toFixed(2);
+
+                // Busca novamente as notas da matéria para garantir que REC está incluso
+                const notasRef = collection(db, "usuarios", user.uid, "materias", nome, "notas");
+                const notasSnap = await getDocs(notasRef);
+
+                let notaRec = 0.00;
+                notasSnap.forEach(doc => {
+                    if (doc.id === "REC") {
+                    const valor = doc.data().valor;
+                    if (valor != null) notaRec = Number(valor);
+                    }
+                });
+
                 document.getElementById("listaNotas").innerHTML = `
-                  <div class="nota-item">
+                    <div class="nota-item">
                     <span>Prova REC</span>
-                    <span>0.00</span>
-                  </div>
+                    <span>${notaRec.toFixed(2)}</span>
+                    </div>
                 `;
       
-                const sugestoesDiv = document.querySelector(".notasIA");
+                if (notaRec >= 0.01) {
+                    sugestoesDiv.innerHTML = ``;
+                } else {
                 sugestoesDiv.innerHTML = "";
       
                 const recRef = doc(db, "usuarios", user.uid, "materias", nome, "notas", "REC");
@@ -191,7 +207,7 @@
                 const recNota = recSnap.exists() ? recSnap.data().valor ?? null : null;
       
                 const sugestao = recNota != null
-                  ? recNota + (6 - recNota)
+                  ? 6 + (6 - mediaCalculada)
                   : 6 + (6 - mediaCalculada);
       
                 sugestoesDiv.innerHTML = `
@@ -200,6 +216,7 @@
                     <h3 id="markTest">${sugestao.toFixed(2)}</h3>
                   </div>
                 `;
+                }
       
                 document.getElementById("modalNotas").classList.add("open");
               });
