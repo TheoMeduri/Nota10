@@ -430,6 +430,33 @@ main h1 {
     opacity: 0;
   }
 
+  #relative { 
+    position: relative;
+    display: none;
+  }
+
+  .menu-profile {
+    transition: .5s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #relative .menu-profile.openMenu {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .menu-profile {
+    position: absolute;
+    width: 330px;
+    max-width: 350px;
+    bottom: 80px;
+    right: 10px;
+    background-color: #040a16;
+    padding: 15px;
+    border-radius: 15px 15px 5px 15px;
+  }
+
   @media (max-width: 652px) {
         .sidebar {
             top: 96%;
@@ -464,6 +491,75 @@ main h1 {
                 }
             }
 
+            #relative {
+              display: flex;
+              p {
+                display: flex;
+              }
+            }
+
+            #relative .header-sidebar{
+              display: flex;
+              
+            }
+
+            #relative h4 {
+              font-family: var(--font-family-title);
+            }
+
+            #relative .config-menu {
+              display: flex;
+              flex-direction: column;
+              gap: 5px;
+              padding-bottom: 15px;
+              border-bottom: 2px solid #091429;
+              font-family: var(--font-family-body);
+              margin-bottom: 20px;
+            }
+
+            #relative .config-menu .config {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 1px dashed #091429;
+              color: var(--colorConfig);
+              padding: 10px 0;
+            }
+
+            #relative .config-menu .config:last-child {
+              border-bottom: none;
+              padding-bottom: 0;
+            }
+
+            #relative .config-menu .config button {
+              width: 40px;
+              height: 40px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border: 2px solid var(--accent-blue);
+              background-color: var(--primary-blue);
+              border-radius: 20%;
+              color: #fff;
+              i {
+                font-weight: 100;
+              }
+            }
+
+            #relative #logoutBtn {
+              width: 100%;
+              display: flex;
+              gap: .5rem;
+              color: #ff2727;
+              background-color: transparent;
+              border: none;
+              align-items: center;
+              margin-bottom: 10px;
+            }
+
+            #logout {
+              display: none;
+            }
 
             .footer-sidebar {
                 border-top: none;
