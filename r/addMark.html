@@ -23,11 +23,11 @@
     <div class="sidebar">
         <div class="header-sidebar">
             <div class="img-user">
-                <span id="iniciais">U</span>
+                <span id="iniciais" class="iniciais">U</span>
             </div>
             <div class="txt">
-                <h3 id="nameUser">Usuário</h3>
-                <p id="emailUser">usuario@gmail.com</p>
+                <h3 id="nameUser" class="nameUser">Usuário</h3>
+                <p id="emailUser" class="emailUser">usuario@gmail.com</p>
             </div>
         </div>
 
@@ -285,19 +285,20 @@ document.getElementById("deleteMarks").addEventListener("click", () => {
           if (!user) return window.location.href = "./login";
         
           const userRef = doc(db, "usuarios", user.uid);
-          const userSnap = await getDoc(userRef);
-        
-          // 👇 Bloco adicionado conforme solicitado
-          if (userSnap.exists()) {
-            const data = userSnap.data();
-            const nome = data.nome || "Usuário";
-            const email = data.email || user.email;
-        
-            document.getElementById("nameUser").textContent = nome;
-            document.getElementById("emailUser").textContent = email;
-            document.getElementById("iniciais").textContent = nome.charAt(0).toUpperCase();
-          }
-        
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          const nome = data.nome || "Usuário";
+          const email = data.email || user.email || "email não disponível";
+
+          console.log("Nome:", nome);
+          console.log("Email carregado:", email);
+
+          document.querySelectorAll(".nameUser").forEach(el => el.textContent = nome);
+          document.querySelectorAll(".emailUser").forEach(el => el.textContent = email);
+          document.querySelectorAll(".iniciais").forEach(el => el.textContent = nome.charAt(0).toUpperCase());
+        }
           const tabela = document.getElementById("tbodyNotas");
         
           function atualizarInput(materia, tipo, valor) {
