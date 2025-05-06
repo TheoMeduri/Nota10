@@ -24,11 +24,11 @@
       <div class="sidebar">
         <div class="header-sidebar">
             <div class="img-user">
-                <span id="iniciais">U</span>
+                <span id="iniciais" class="iniciais">U</span>
             </div>
             <div class="txt">
-                <h3 id="nameUser">Usuário</h3>
-                <p id="emailUser">usuario@gmail.com</p>
+                <h3 id="nameUser" class="nameUser">Usuário</h3>
+                <p id="emailUser" class="emailUser">usuario@gmail.com</p>
             </div>
         </div>
 
@@ -54,8 +54,41 @@
         </div>
 
         <div class="footer-sidebar">
+          <li>
+            <a href="#" id="relative">
+              <i class="ri-user-settings-line"></i>
+              <div class="menu-profile">
+                <h4 style="margin-bottom: 10px;">Perfil</h4>
+                <div class="header-sidebar">
+                  <div class="img-user">
+                      <span id="iniciais" class="iniciais">U</span>
+                  </div>
+                  <div class="txt">
+                      <h3 id="nameUser" class="nameUser">Usuário</h3>
+                      <p id="emailUser" class="emailUser">usuario@gmail.com</p>
+                  </div>
+                </div>
+                <h4 style="margin-bottom: 10px;">Configurações</h4>
+                <div class="config-menu">
+                    <div class="config" style="--colorConfig: #b4b4b4;">
+                      <p>Excluir Notas</p>
+                      <button id="deleteMarks"><i class="ri-delete-bin-5-line"></i></button>
+                    </div>
+
+                    <div class="config" style="--colorConfig: #b4b4b4;">
+                      <p>Criar Boletim</p>
+                      <button id="btnBoletim"><i class="ri-file-list-3-line"></i></button>
+                    </div>
+                </div>
+                <button id="logoutBtn" onclick="logoutBTN()">
+                  <i class="ri-logout-box-line"></i>
+                  <p>Desconectar</p>
+                </button>
+              </div>
+            </a>
+          </li>
             <li>
-                <a href=".//" id="logout" onclick="logout()">
+                <a href="../" id="logout" onclick="logout()">
                     <i class="ri-logout-box-line"></i>
                     <p>Desconectar</p>
                 </a>
@@ -160,31 +193,23 @@
       <br>
       <br><br><br><br>
 
-    <div class="modal">
+    <!-- <div class="modal">
         <p>Carregando suas matérias</p>
         <div class="loader"></div>
-    </div>
-
+    </div> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
     <script>
 
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Menu principal
-            document.querySelectorAll('.has-submenu > a').forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                link.parentElement.classList.toggle('open');
-            });
-            });
+        document.getElementById('relative').addEventListener('click', ()=> {
+            document.querySelector(".menu-profile").classList.toggle('openMenu')
+        })
 
-            // Submenu interno (frentes)
-            document.querySelectorAll('.has-subsubmenu > a').forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                link.parentElement.classList.toggle('open');
-            });
-            });
-        });
+        function logoutBTN() {
+          Window.location.href = '../'
+        }
 
     </script>
 <script type="module">
@@ -196,7 +221,8 @@
       getDoc,
       collection,
       getDocs,
-      setDoc
+      setDoc,
+      deleteDoc
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     
     const firebaseConfig = {
@@ -211,7 +237,128 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    
+
+    // Função para excluir todas as matérias
+async function excluirNotas(userId) {
+  const materiasRef = collection(db, "usuarios", userId, "materias");
+  const snap = await getDocs(materiasRef);
+  for (const mat of snap.docs) {
+    await deleteDoc(mat.ref); // deleta o documento da matéria
+  }
+  alert("Notas excluídas com sucesso!");
+}async function gerarBoletim(userId) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const materiasRef = collection(db, "usuarios", userId, "materias");
+  const materiasSnap = await getDocs(materiasRef);
+
+  // Cabeçalho
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("BOLETIM ESCOLAR - NOTA10", 105, 20, { align: "center" });
+
+  // Cabeçalho da tabela
+  const startY = 30;
+  const headerBgColor = [230, 230, 230]; // cinza claro
+  let y = startY;
+
+  doc.setFillColor(...headerBgColor);
+  doc.rect(10, y - 6, 190, 8, 'F'); // fundo do cabeçalho
+
+  doc.setFontSize(11);
+  doc.setTextColor(0);
+  doc.setFont("helvetica", "bold");
+  doc.text("Matéria", 12, y);
+  doc.text("P1", 58, y);
+  doc.text("P2", 68, y);
+  doc.text("P3", 78, y);
+  doc.text("NL", 88, y);
+  doc.text("PG", 98, y);
+  doc.text("REC", 108, y);
+  doc.text("Média", 123, y);
+  doc.text("Situação", 150, y);
+
+  y += 6;
+
+  for (const materia of materiasSnap.docs) {
+    const nome = materia.id;
+    const notasRef = collection(db, "usuarios", userId, "materias", nome, "notas");
+    const notasSnap = await getDocs(notasRef);
+
+    const notas = {};
+    notasSnap.forEach(n => notas[n.id] = n.data().valor ?? 0);
+
+    const p1 = notas.P1 ?? 0;
+    const p2 = notas.P2 ?? 0;
+    const p3 = notas.P3 ?? 0;
+    const nl = notas.NL ?? 0;
+    const pg = notas.PG ?? 0;
+    const rec = notas.REC ?? null;
+    const media = Number(notas.MEDIA ?? 0);
+
+    let situacao = "Aprovado";
+    let corSituacao = [0, 150, 0]; // verde
+
+    if (media < 6 && rec == null) {
+      situacao = "Reprovado";
+      corSituacao = [200, 0, 0]; // vermelho
+    } else if (media < 6 && rec != null) {
+      situacao = "Recuperação";
+      corSituacao = [255, 165, 0]; // laranja
+    }
+
+    // Matéria e notas
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(0);
+
+    doc.text(nome, 12, y);
+    doc.text(p1.toFixed(1), 58, y, { align: "right" });
+    doc.text(p2.toFixed(1), 68, y, { align: "right" });
+    doc.text(p3.toFixed(1), 78, y, { align: "right" });
+    doc.text(nl.toFixed(1), 88, y, { align: "right" });
+    doc.text(pg.toFixed(1), 98, y, { align: "right" });
+    doc.text(rec != null ? rec.toFixed(1) : "-", 108, y, { align: "right" });
+    doc.text(media.toFixed(2), 123, y, { align: "right" });
+
+    doc.setTextColor(...corSituacao);
+    doc.text(situacao, 150, y);
+
+    // Linha separadora
+    doc.setDrawColor(220);
+    doc.line(10, y + 2, 200, y + 2);
+
+    y += 10;
+
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+  }
+
+  doc.save("boletim_NOTA10(2025).pdf");
+}
+
+
+
+// Detecta login do usuário
+onAuthStateChanged(auth, (user) => {
+  if (!user) return;
+
+  document.getElementById("btnBoletim").addEventListener("click", () => {
+  gerarBoletim(user.uid);
+});
+
+document.getElementById("deleteMarks").addEventListener("click", () => {
+  excluirNotas(user.uid);
+});
+
+  document.querySelector('.config button i.ri-delete-bin-5-line').closest("button").addEventListener("click", () => excluirNotas(user.uid));
+  document.querySelector('.config button i.ri-file-list-3-line').closest("button").addEventListener("click", () => gerarBoletim(user.uid));
+});
+
+
     document.addEventListener("DOMContentLoaded", () => {
       window.onload = function () {
         setTimeout(() => {
@@ -224,16 +371,20 @@
     
         const userRef = doc(db, "usuarios", user.uid);
         const userSnap = await getDoc(userRef);
-    
+
         if (userSnap.exists()) {
           const data = userSnap.data();
           const nome = data.nome || "Usuário";
-          const email = data.email || user.email;
-    
-          document.getElementById("nameUser").textContent = nome;
-          document.getElementById("emailUser").textContent = email;
-          document.getElementById("iniciais").textContent = nome.charAt(0).toUpperCase();
+          const email = data.email || user.email || "email não disponível";
+
+          console.log("Nome:", nome);
+          console.log("Email carregado:", email);
+
+          document.querySelectorAll(".nameUser").forEach(el => el.textContent = nome);
+          document.querySelectorAll(".emailUser").forEach(el => el.textContent = email);
+          document.querySelectorAll(".iniciais").forEach(el => el.textContent = nome.charAt(0).toUpperCase());
         }
+
     
         // Verifica e cria matérias com subcoleção de notas
         const materias = [
