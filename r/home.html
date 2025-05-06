@@ -138,14 +138,21 @@
         <div class="modal-body" id="listaNotas">
           <!-- Notas serão inseridas aqui -->
         </div>
+
+        <div class="modal-body">
+            <div class="icon"><i class="ri-bard-line"></i> <p>Sugestões Inteligentes</p></div>
+
+            <div class="notasIA">
+            </div>
+        </div>
       </div>
       <br>
       <br><br><br><br>
 
-    <div class="modal">
+    <!-- <div class="modal">
         <p>Carregando suas matérias</p>
         <div class="loader"></div>
-    </div>
+    </div> -->
 
     <script>
 
@@ -361,6 +368,129 @@
           </div>`;
       }
     }
+    const sugestoesDiv = document.querySelector('.notasIA');
+sugestoesDiv.innerHTML = '';
+
+const mediaMinima = 6;
+const parse2 = (v) => v != null ? Number(v) : null;
+
+
+const addSugestao = (campo, valor) => {
+  sugestoesDiv.innerHTML += `
+    <div class="notaIA">
+      <p id="nameTest">${campo}</p>
+      <h3 id="markTest">${valor.toFixed(2)}</h3>
+    </div>
+  `;
+};
+
+
+
+function gerarDistribuicao(notas, campos, pesos, maximos, multiplicador = 1) {
+  let soma = 0;
+  let faltando = [];
+  let pesoTotal = 0;
+
+  for (const campo of campos) {
+    const peso = pesos[campo] || 1;
+    const val = parse2(notas[campo]);
+
+    if (val != null) {
+      soma += val * peso;
+    } else {
+      faltando.push(campo);
+    }
+
+    pesoTotal += peso;
+  }
+
+  if (!faltando.length) return;
+
+  const pesosFaltantes = faltando.reduce((acc, campo) => acc + (pesos[campo] || 1), 0);
+  const totalEsperado = mediaMinima * pesoTotal * multiplicador;
+  const restante = totalEsperado - soma;
+
+  for (const campo of faltando) {
+    const peso = pesos[campo] || 1;
+    const max = maximos[campo] || 10;
+    const sugestao = (restante * peso) / pesosFaltantes;
+    addSugestao(campo, Math.min(sugestao, max));
+  } 
+}
+if (nome === "Redação") {
+  gerarDistribuicao(
+    notas,
+    ["P1", "P2", "P3"],
+    { P1: 1, P2: 0.5, P3: 0.5 },
+    { P1: 10, P2: 10, P3: 10 },
+    1  // multiplicador padrão
+  );
+} else if (["Filosofia", "Inglês"].includes(nome)) {
+  gerarDistribuicao(
+    notas,
+    ["P1", "NL", "PG"],
+    { P1: 1, NL: 1, PG: 1 },
+    { P1: 10, NL: 5, PG: 5 },
+    1  // fórmula: (P1 + NL + PG) / 2
+  );
+} else if (nome === "Matemática A" || nome === "Matemática B") {
+  const matARef = collection(db, "usuarios", user.uid, "materias", "Matemática A", "notas");
+  const matBRef = collection(db, "usuarios", user.uid, "materias", "Matemática B", "notas");
+
+  const [matASnap, matBSnap] = await Promise.all([
+    getDocs(matARef),
+    getDocs(matBRef),
+  ]);
+
+  const notasA = {}, notasB = {};
+  matASnap.forEach(doc => notasA[doc.id] = doc.data().valor);
+  matBSnap.forEach(doc => notasB[doc.id] = doc.data().valor);
+
+  const campos = ["P1", "P2", "NL", "PG"];
+  const maximos = { P1: 10, P2: 10, NL: 5, PG: 5 };
+  const parse2 = (v) => v != null ? Number(v) : null;
+
+  function sugerirNotas(nomeFrente, notasFrente) {
+    let somaAtual = 0;
+    let faltando = [];
+
+    for (const campo of campos) {
+      const val = parse2(notasFrente[campo]);
+      if (val != null) {
+        somaAtual += val;
+      } else {
+        faltando.push(campo);
+      }
+    }
+
+    if (faltando.length === 0) return;
+
+    const restante = 18 - somaAtual;
+    const porCampo = restante / faltando.length;
+
+    for (const campo of faltando) {
+      const max = maximos[campo];
+      const sugestao = Math.min(porCampo, max);
+      addSugestao(`${nomeFrente} - ${campo}`, sugestao);
+    }
+  }
+
+  sugerirNotas("MAT A", notasA);
+  sugerirNotas("MAT B", notasB);
+}
+
+ else {
+  gerarDistribuicao(
+    notas,
+    ["P1", "P2", "NL", "PG"],
+    { P1: 1, P2: 1, NL: 1, PG: 1 },
+    { P1: 10, P2: 10, NL: 5, PG: 5 },
+    1
+  );
+}
+
+
+
 
     document.getElementById('modalMedia').textContent = `${mediaFinal != null ? mediaFinal.toFixed(2) : "0.00"}`;
     document.getElementById('modalNotas').classList.add('open');
