@@ -20,7 +20,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
-
+  
       <div class="sidebar">
         <div class="header-sidebar">
             <div class="img-user">
@@ -98,7 +98,10 @@
 
       <main>
         <h1>Suas matérias</h1>
-
+        <div class="notf">
+          <i class="ri-alert-line"></i>
+          <p><strong>Atenção:</strong> As notas serão reiniciadas automaticamente no sistema no dia <strong>17/05 às 18h00</strong>.</p>
+        </div>
         <div class="materias">
             <div class="materia">
                 <div class="img-mt" style="--color: #4CAF50;"><span>B</span></div>
@@ -193,10 +196,10 @@
       <br>
       <br><br><br><br>
 
-    <!-- <div class="modal">
+    <div class="modal">
         <p>Carregando suas matérias</p>
         <div class="loader"></div>
-    </div> -->
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     
@@ -505,6 +508,7 @@ document.getElementById("deleteMarks").addEventListener("click", () => {
         const mediaB = (p1 + p2 + nl + pg) / 3;
         mediaFinal = mediaB * 0.45;
       }
+
     } else {
       const p1 = parse(notas.P1);
       const p2 = parse(notas.P2);
@@ -513,6 +517,7 @@ document.getElementById("deleteMarks").addEventListener("click", () => {
       if (p1 != null && p2 != null && nl != null && pg != null) {
         mediaFinal = (p1 + p2 + nl + pg) / 3;
       }
+      
     }
 
     // Atualiza Firestore se média calculada
