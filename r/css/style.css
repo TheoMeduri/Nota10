@@ -127,6 +127,40 @@ body {
     border-top: 2px solid #091429;
   }
 
+.notf {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(65deg, #ffc01252, #ca970852) ;
+  border: 2px solid #ffc012;
+  border-radius: 15px;
+  color: #ebaf0a;
+  text-shadow: 0 0 10px #00000010;
+  box-shadow: 0 0 0 1px #ffc01252;
+  animation: shadow 2s infinite;
+  i {
+    font-size: 1.3rem;
+    
+  }
+}
+
+@keyframes shadow {
+  0% {
+    box-shadow: 0 0 0 1px #ffc01252;
+  }
+
+  50% {
+    box-shadow: 0 0 0 7px #ffc01252;
+  }
+
+  100% {
+    box-shadow: 0 0 0 1px #ffc01252;
+  }
+}
+
 main {
     width: calc(100% - 300px);
     margin-left: auto;
